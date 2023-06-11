@@ -11,6 +11,7 @@ import (
 	"github.com/sotirismorf/microservice/internal/database"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Service struct {
@@ -27,7 +28,7 @@ func NewService(queries *database.Queries) *Service {
 }
 
 func (s *Service) RegisterHandlers(router *gin.Engine) {
-	router.POST("/token", s.GenerateToken)
+	router.POST("/token", s.GetToken)
 }
 
 func GenerateToken(user_id int64) (string, error) {
@@ -48,7 +49,7 @@ func GenerateToken(user_id int64) (string, error) {
 
 }
 
-func (s *Service) GenerateToken(c *gin.Context) {
+func (s *Service) GetToken(c *gin.Context) {
 	var request credentials
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -56,17 +57,35 @@ func (s *Service) GenerateToken(c *gin.Context) {
 		return
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password),bcrypt.DefaultCost)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
 	user, err := s.queries.GetUser(context.Background(), request.Username)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error(),"request": request})
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 		return
 	}
+
+	// err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
+	//
+	// if err != nil {
+	// 	if  err == bcrypt.ErrMismatchedHashAndPassword {
+	// 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
+	// 	c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
+	// 	return
+	// }
 
 	token, err := GenerateToken(user.ID)
 
