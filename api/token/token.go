@@ -57,12 +57,12 @@ func (s *Service) GetToken(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password),bcrypt.DefaultCost)
-
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
+	// hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password),bcrypt.DefaultCost)
+	//
+	// if err != nil {
+	// 	c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	// 	return
+	// }
 
 	user, err := s.queries.GetUser(context.Background(), request.Username)
 
@@ -76,16 +76,16 @@ func (s *Service) GetToken(c *gin.Context) {
 		return
 	}
 
-	// err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
-	//
-	// if err != nil {
-	// 	if  err == bcrypt.ErrMismatchedHashAndPassword {
-	// 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-	// 		return
-	// 	}
-	// 	c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
-	// 	return
-	// }
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
+
+	if err != nil {
+		if  err == bcrypt.ErrMismatchedHashAndPassword {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
+		return
+	}
 
 	token, err := GenerateToken(user.ID)
 
