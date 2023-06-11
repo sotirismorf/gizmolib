@@ -1,5 +1,7 @@
 # This is a proof of concept
 
-- written in go
+- Written in Go
+- REST API
+- Dockerized
 - PostgreSQL database
 - JWT authentication
