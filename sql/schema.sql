@@ -11,3 +11,5 @@ CREATE TABLE books
     title       VARCHAR(64) NOT NULL,
     description TEXT NOT NULL
 );
+
+-- CONSTRAINT fk_author FOREIGN KEY(author_id) REFERENCES authors(id)
