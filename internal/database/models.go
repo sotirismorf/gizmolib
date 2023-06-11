@@ -18,3 +18,9 @@ type Book struct {
 	AuthorID    int64
 	Description string
 }
+
+type User struct {
+	ID       int64
+	Username string
+	Password string
+}

@@ -13,3 +13,14 @@ CREATE TABLE books
     description TEXT NOT NULL,
     CONSTRAINT fk_author FOREIGN KEY(author_id) REFERENCES authors(id)
 );
+
+CREATE TABLE users
+(
+    id          BIGSERIAL PRIMARY KEY,
+    username    VARCHAR(64) NOT NULL,
+    password    VARCHAR(64) NOT NULL
+);
+
+INSERT INTO users (username, password)
+VALUES ('username1', 'password1')
+RETURNING *;

@@ -1,10 +1,12 @@
 package token
 
 import (
-	// "database/sql"
+	"database/sql"
+	"context"
 	"net/http"
 	"time"
 	"strconv"
+	// "fmt"
 
 	"github.com/sotirismorf/microservice/internal/database"
 	"github.com/gin-gonic/gin"
@@ -16,8 +18,8 @@ type Service struct {
 }
 
 type credentials struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Username    string `json:"username,omitempty" binding:"required,max=64"`
+	Password    string `json:"password,omitempty" binding:"required,max=64"`
 }
 
 func NewService(queries *database.Queries) *Service {
@@ -28,7 +30,7 @@ func (s *Service) RegisterHandlers(router *gin.Engine) {
 	router.POST("/token", s.GenerateToken)
 }
 
-func GenerateToken(user_id uint) (string, error) {
+func GenerateToken(user_id int64) (string, error) {
 
 	token_lifespan,err := strconv.Atoi("1")
 
@@ -46,20 +48,7 @@ func GenerateToken(user_id uint) (string, error) {
 
 }
 
-func LoginCheck(username string, password string) (string,error) {
-	var err error
-
-	token, err := GenerateToken(1)
-
-	if err != nil {
-		return "",err
-	}
-
-	return token,nil
-}
-
 func (s *Service) GenerateToken(c *gin.Context) {
-	// Parse request
 	var request credentials
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -67,10 +56,22 @@ func (s *Service) GenerateToken(c *gin.Context) {
 		return
 	}
 
-	token, err := LoginCheck(request.Username, request.Password)
+	user, err := s.queries.GetUser(context.Background(), request.Username)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error(),"request": request})
+			return
+		}
+
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, err := GenerateToken(user.ID)
+
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 		return
 	}
 
