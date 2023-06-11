@@ -1,6 +1,6 @@
 -- name: CreateBook :one
-INSERT INTO books (title, description)
-VALUES ($1, $2)
+INSERT INTO books (title, description, author_id)
+VALUES ($1, $2, $3)
 RETURNING *;
 
 -- name: GetBook :one
@@ -12,7 +12,8 @@ LIMIT 1;
 -- name: UpdateBook :one
 UPDATE books
 SET title = $2,
-    description  = $3
+    description  = $3,
+    author_id  = $4
 WHERE id = $1
 RETURNING *;
 
@@ -29,8 +30,9 @@ FROM books
 WHERE id = $1;
 
 -- name: ListBooks :many
-SELECT *
+SELECT books.id, books.author_id, books.title, books.description, authors.name
 FROM books
+JOIN authors on books.author_id = authors.id
 ORDER BY title;
 
 -- name: TruncateBooks :exec

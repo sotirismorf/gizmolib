@@ -30,6 +30,15 @@ type apiBook struct {
 	ID          int64
 	Title       string `json:"title,omitempty" binding:"required,max=32"`
 	Description string `json:"description,omitempty" binding:"required"`
+	AuthorID    int64
+}
+
+type apiBookFull struct {
+	ID          int64
+	AuthorID    int64
+	Title       string `json:"title,omitempty" binding:"required,max=32"`
+	Description string `json:"description,omitempty" binding:"required"`
+	Name        string `json:"name,omitempty" binding:"required"`
 }
 
 type apiBookPartialUpdate struct {
@@ -40,8 +49,19 @@ type apiBookPartialUpdate struct {
 func fromDB(book database.Book) *apiBook {
 	return &apiBook{
 		ID:          book.ID,
+		AuthorID:    book.AuthorID,
 		Title:       book.Title,
 		Description: book.Description,
+	}
+}
+
+func fromDBFull(book database.ListBooksRow) *apiBookFull {
+	return &apiBookFull{
+		ID:          book.ID,
+		AuthorID:    book.AuthorID,
+		Title:       book.Title,
+		Description: book.Description,
+		Name:        book.Name,
 	}
 }
 
@@ -61,6 +81,7 @@ func (s *Service) Create(c *gin.Context) {
 	params := database.CreateBookParams{
 		Title:       request.Title,
 		Description: request.Description,
+		AuthorID:    request.AuthorID,
 	}
 	book, err := s.queries.CreateBook(context.Background(), params)
 	if err != nil {
@@ -115,7 +136,8 @@ func (s *Service) FullUpdate(c *gin.Context) {
 	params := database.UpdateBookParams{
 		ID:   pathParams.ID,
 		Title: request.Title,
-		Description:  request.Description,
+		Description: request.Description,
+		AuthorID: request.AuthorID,
 	}
 	book, err := s.queries.UpdateBook(context.Background(), params)
 	if err != nil {
@@ -209,9 +231,9 @@ func (s *Service) List(c *gin.Context) {
 	}
 
 	// Build response
-	var response []*apiBook
+	var response []*apiBookFull
 	for _, book := range books {
-		response = append(response, fromDB(book))
+		response = append(response, fromDBFull(book))
 	}
 	c.IndentedJSON(http.StatusOK, books)
 }
