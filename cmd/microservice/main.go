@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/bquenin/microservice/api/authors"
-	"github.com/bquenin/microservice/cmd/microservice/config"
-	"github.com/bquenin/microservice/internal/database"
+	"github.com/sotirismorf/microservice/api/authors"
+	"github.com/sotirismorf/microservice/cmd/microservice/config"
+	"github.com/sotirismorf/microservice/internal/database"
 	"github.com/gin-gonic/gin"
 )
 

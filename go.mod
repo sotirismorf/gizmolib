@@ -1,4 +1,4 @@
-module github.com/bquenin/microservice
+module github.com/sotirismorf/microservice
 
 go 1.18
 

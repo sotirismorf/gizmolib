@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"net/http"
 	
-	"github.com/bquenin/microservice/internal/database"
+	"github.com/sotirismorf/microservice/internal/database"
 	"github.com/gin-gonic/gin"
 )
 
