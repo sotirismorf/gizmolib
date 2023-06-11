@@ -47,7 +47,6 @@ func GenerateToken(user_id uint) (string, error) {
 }
 
 func LoginCheck(username string, password string) (string,error) {
-	
 	var err error
 
 	token, err := GenerateToken(1)
@@ -57,20 +56,18 @@ func LoginCheck(username string, password string) (string,error) {
 	}
 
 	return token,nil
-	
 }
 
 func (s *Service) GenerateToken(c *gin.Context) {
 	// Parse request
 	var request credentials
-	
+
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// token, err := models.LoginCheck(u.Username, u.Password)
-	token, err := LoginCheck("sotiris", "password")
+	token, err := LoginCheck(request.Username, request.Password)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
