@@ -22,5 +22,5 @@ CREATE TABLE users
 );
 
 INSERT INTO users (username, password)
-VALUES ('username1', 'password1')
+VALUES ('username1', '$2a$10$gcF3GsYfgk5VPS4cKMq/0e318zQWquObmy1wtjUi2jifK2mKtnxyi')
 RETURNING *;
