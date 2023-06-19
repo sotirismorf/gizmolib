@@ -1,0 +1,45 @@
+POST http://localhost:8080/token
+
+{
+	"username": "username1",
+	"password": "password"
+}
+
+DELETE http://localhost:8080/authors/8
+
+GET http://localhost:8080/authors
+
+POST http://localhost:8080/authors
+
+{
+	"Name": "Gilles Deleuze",
+	"Bio": "Bomb ass writer"
+}
+
+POST http://localhost:8080/books
+
+{
+	"Title": "anti-oedipus",
+	"Description": "a nice book",
+	"AuthorID": 1
+}
+
+GET http://localhost:8080/books
+
+GET http://localhost:8080/books/1
+
+PUT http://localhost:8080/books/1
+
+{
+	"Title": "anti-oedipuss",
+	"Description": "a veeery nice book*",
+	"AuthorID": 1
+}
+
+PATCH http://localhost:8080/books/1
+
+{
+	"Description": "a bad book*"
+}
+
+DELETE http://localhost:8080/books/1
