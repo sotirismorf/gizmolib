@@ -20,7 +20,3 @@ CREATE TABLE users
     username    VARCHAR(64) NOT NULL,
     password    VARCHAR(64) NOT NULL
 );
-
-INSERT INTO users (username, password)
-VALUES ('username1', '$2a$10$gcF3GsYfgk5VPS4cKMq/0e318zQWquObmy1wtjUi2jifK2mKtnxyi')
-RETURNING *;
