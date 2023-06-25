@@ -27,24 +27,24 @@ func (s *Service) RegisterHandlers(router *gin.Engine) {
 }
 
 type apiBook struct {
-	ID          int64
-	Title       string `json:"title,omitempty" binding:"required,max=32"`
-	Description string `json:"description,omitempty" binding:"required"`
-	AuthorID    int64
-	YearPublished int16
+	ID              int64
+	Title           string `json:"title,omitempty" binding:"required,max=32"`
+	Description     string `json:"description,omitempty" binding:"required"`
+	AuthorID        int64
+	YearPublished   int16
 	CopiesAvailable int32
-	CopiesTotal int32
+	CopiesTotal     int32
 }
 
 type apiBookFull struct {
-	ID          int64
-	AuthorID    int64
-	Title       string `json:"title,omitempty" binding:"required,max=32"`
-	AuthorName  string `json:"name,omitempty" binding:"required"`
-	Description string `json:"description,omitempty" binding:"required"`
-	YearPublished int16
+	ID              int64
+	AuthorID        int64
+	Title           string `json:"title,omitempty" binding:"required,max=32"`
+	AuthorName      string `json:"name,omitempty" binding:"required"`
+	Description     string `json:"description,omitempty" binding:"required"`
+	YearPublished   int16
 	CopiesAvailable int32
-	CopiesTotal int32
+	CopiesTotal     int32
 }
 
 type apiBookPartialUpdate struct {
@@ -66,13 +66,13 @@ func fromDB(book database.Book) *apiBook {
 
 func fromDBFull(book database.ListBooksRow) *apiBookFull {
 	return &apiBookFull{
-		ID:          book.ID,
-		AuthorID:    book.AuthorID,
-		Title:       book.Title,
-		Description: book.Description,
-		AuthorName:  book.Name,
-		YearPublished: book.YearPublished,
-		CopiesTotal: book.CopiesTotal,
+		ID:              book.ID,
+		AuthorID:        book.AuthorID,
+		Title:           book.Title,
+		Description:     book.Description,
+		AuthorName:      book.Name,
+		YearPublished:   book.YearPublished,
+		CopiesTotal:     book.CopiesTotal,
 		CopiesAvailable: book.CopiesAvailable,
 	}
 }
@@ -91,12 +91,12 @@ func (s *Service) Create(c *gin.Context) {
 
 	// Create book
 	params := database.CreateBookParams{
-		Title:       request.Title,
-		Description: request.Description,
-		AuthorID:    request.AuthorID,
-		YearPublished:    request.YearPublished,
+		Title:           request.Title,
+		Description:     request.Description,
+		AuthorID:        request.AuthorID,
+		YearPublished:   request.YearPublished,
 		CopiesAvailable: request.CopiesAvailable,
-		CopiesTotal: request.CopiesTotal,
+		CopiesTotal:     request.CopiesTotal,
 	}
 	book, err := s.queries.CreateBook(context.Background(), params)
 	if err != nil {
@@ -149,10 +149,10 @@ func (s *Service) FullUpdate(c *gin.Context) {
 
 	// Update book book
 	params := database.UpdateBookParams{
-		ID:   pathParams.ID,
-		Title: request.Title,
+		ID:          pathParams.ID,
+		Title:       request.Title,
 		Description: request.Description,
-		AuthorID: request.AuthorID,
+		AuthorID:    request.AuthorID,
 	}
 	book, err := s.queries.UpdateBook(context.Background(), params)
 	if err != nil {
