@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 	"strconv"
-	// "fmt"
 
 	"github.com/sotirismorf/microservice/internal/database"
 	"github.com/gin-gonic/gin"
@@ -23,7 +22,7 @@ type credentials struct {
 	Password    string `json:"password,omitempty" binding:"required,max=64"`
 }
 
-func NewService(queries *database.Queries) *Service {
+func NewServiceToken(queries *database.Queries) *Service {
 	return &Service{queries: queries}
 }
 

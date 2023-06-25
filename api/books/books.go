@@ -31,14 +31,20 @@ type apiBook struct {
 	Title       string `json:"title,omitempty" binding:"required,max=32"`
 	Description string `json:"description,omitempty" binding:"required"`
 	AuthorID    int64
+	YearPublished int16
+	CopiesAvailable int32
+	CopiesTotal int32
 }
 
 type apiBookFull struct {
 	ID          int64
 	AuthorID    int64
 	Title       string `json:"title,omitempty" binding:"required,max=32"`
+	AuthorName  string `json:"name,omitempty" binding:"required"`
 	Description string `json:"description,omitempty" binding:"required"`
-	Name        string `json:"name,omitempty" binding:"required"`
+	YearPublished int16
+	CopiesAvailable int32
+	CopiesTotal int32
 }
 
 type apiBookPartialUpdate struct {
@@ -52,6 +58,9 @@ func fromDB(book database.Book) *apiBook {
 		AuthorID:    book.AuthorID,
 		Title:       book.Title,
 		Description: book.Description,
+		YearPublished:    book.YearPublished,
+		CopiesAvailable: book.CopiesAvailable,
+		CopiesTotal: book.CopiesTotal,
 	}
 }
 
@@ -61,7 +70,10 @@ func fromDBFull(book database.ListBooksRow) *apiBookFull {
 		AuthorID:    book.AuthorID,
 		Title:       book.Title,
 		Description: book.Description,
-		Name:        book.Name,
+		AuthorName:  book.Name,
+		YearPublished: book.YearPublished,
+		CopiesTotal: book.CopiesTotal,
+		CopiesAvailable: book.CopiesAvailable,
 	}
 }
 
@@ -82,6 +94,9 @@ func (s *Service) Create(c *gin.Context) {
 		Title:       request.Title,
 		Description: request.Description,
 		AuthorID:    request.AuthorID,
+		YearPublished:    request.YearPublished,
+		CopiesAvailable: request.CopiesAvailable,
+		CopiesTotal: request.CopiesTotal,
 	}
 	book, err := s.queries.CreateBook(context.Background(), params)
 	if err != nil {

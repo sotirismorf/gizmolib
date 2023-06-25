@@ -13,10 +13,13 @@ type Author struct {
 }
 
 type Book struct {
-	ID          int64
-	Title       string
-	AuthorID    int64
-	Description string
+	ID              int64
+	Title           string
+	AuthorID        int64
+	Description     string
+	YearPublished   int16
+	CopiesTotal     int32
+	CopiesAvailable int32
 }
 
 type User struct {

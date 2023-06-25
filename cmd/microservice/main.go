@@ -50,10 +50,10 @@ func main() {
 		log.Println("Found admin user in database")
 	}
 
-	// Instantiates the author service
+	// Instantiates the service
 	authorService := authors.NewService(queries)
 	bookService := books.NewService(queries)
-	tokenService := token.NewService(queries)
+	tokenService := token.NewServiceToken(queries)
 
 	// Register our service handlers to the router
 	router := gin.Default()

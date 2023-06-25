@@ -1,6 +1,6 @@
 -- name: CreateBook :one
-INSERT INTO books (title, description, author_id)
-VALUES ($1, $2, $3)
+INSERT INTO books (title, description, author_id, year_published, copies_total, copies_available)
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
 -- name: GetBook :one
@@ -30,7 +30,15 @@ FROM books
 WHERE id = $1;
 
 -- name: ListBooks :many
-SELECT books.id, books.author_id, books.title, books.description, authors.name
+SELECT
+books.id,
+books.author_id,
+books.copies_available,
+books.copies_total,
+books.description,
+books.title,
+books.year_published,
+authors.name
 FROM books
 JOIN authors on books.author_id = authors.id
 ORDER BY title;

@@ -10,25 +10,38 @@ import (
 )
 
 const createBook = `-- name: CreateBook :one
-INSERT INTO books (title, description, author_id)
-VALUES ($1, $2, $3)
-RETURNING id, title, author_id, description
+INSERT INTO books (title, description, author_id, year_published, copies_total, copies_available)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, title, author_id, description, year_published, copies_total, copies_available
 `
 
 type CreateBookParams struct {
-	Title       string
-	Description string
-	AuthorID    int64
+	Title           string
+	Description     string
+	AuthorID        int64
+	YearPublished   int16
+	CopiesTotal     int32
+	CopiesAvailable int32
 }
 
 func (q *Queries) CreateBook(ctx context.Context, arg CreateBookParams) (Book, error) {
-	row := q.db.QueryRowContext(ctx, createBook, arg.Title, arg.Description, arg.AuthorID)
+	row := q.db.QueryRowContext(ctx, createBook,
+		arg.Title,
+		arg.Description,
+		arg.AuthorID,
+		arg.YearPublished,
+		arg.CopiesTotal,
+		arg.CopiesAvailable,
+	)
 	var i Book
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
 		&i.AuthorID,
 		&i.Description,
+		&i.YearPublished,
+		&i.CopiesTotal,
+		&i.CopiesAvailable,
 	)
 	return i, err
 }
@@ -45,7 +58,7 @@ func (q *Queries) DeleteBook(ctx context.Context, id int64) error {
 }
 
 const getBook = `-- name: GetBook :one
-SELECT id, title, author_id, description
+SELECT id, title, author_id, description, year_published, copies_total, copies_available
 FROM books
 WHERE id = $1
 LIMIT 1
@@ -59,23 +72,37 @@ func (q *Queries) GetBook(ctx context.Context, id int64) (Book, error) {
 		&i.Title,
 		&i.AuthorID,
 		&i.Description,
+		&i.YearPublished,
+		&i.CopiesTotal,
+		&i.CopiesAvailable,
 	)
 	return i, err
 }
 
 const listBooks = `-- name: ListBooks :many
-SELECT books.id, books.author_id, books.title, books.description, authors.name
+SELECT
+books.id,
+books.author_id,
+books.copies_available,
+books.copies_total,
+books.description,
+books.title,
+books.year_published,
+authors.name
 FROM books
 JOIN authors on books.author_id = authors.id
 ORDER BY title
 `
 
 type ListBooksRow struct {
-	ID          int64
-	AuthorID    int64
-	Title       string
-	Description string
-	Name        string
+	ID              int64
+	AuthorID        int64
+	CopiesAvailable int32
+	CopiesTotal     int32
+	Description     string
+	Title           string
+	YearPublished   int16
+	Name            string
 }
 
 func (q *Queries) ListBooks(ctx context.Context) ([]ListBooksRow, error) {
@@ -90,8 +117,11 @@ func (q *Queries) ListBooks(ctx context.Context) ([]ListBooksRow, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.AuthorID,
-			&i.Title,
+			&i.CopiesAvailable,
+			&i.CopiesTotal,
 			&i.Description,
+			&i.Title,
+			&i.YearPublished,
 			&i.Name,
 		); err != nil {
 			return nil, err
@@ -112,7 +142,7 @@ UPDATE books
 SET title = CASE WHEN $1::boolean THEN $2::VARCHAR(32) ELSE title END,
     description  = CASE WHEN $3::boolean THEN $4::TEXT ELSE description END
 WHERE id = $5
-RETURNING id, title, author_id, description
+RETURNING id, title, author_id, description, year_published, copies_total, copies_available
 `
 
 type PartialUpdateBookParams struct {
@@ -137,6 +167,9 @@ func (q *Queries) PartialUpdateBook(ctx context.Context, arg PartialUpdateBookPa
 		&i.Title,
 		&i.AuthorID,
 		&i.Description,
+		&i.YearPublished,
+		&i.CopiesTotal,
+		&i.CopiesAvailable,
 	)
 	return i, err
 }
@@ -156,7 +189,7 @@ SET title = $2,
     description  = $3,
     author_id  = $4
 WHERE id = $1
-RETURNING id, title, author_id, description
+RETURNING id, title, author_id, description, year_published, copies_total, copies_available
 `
 
 type UpdateBookParams struct {
@@ -179,6 +212,9 @@ func (q *Queries) UpdateBook(ctx context.Context, arg UpdateBookParams) (Book, e
 		&i.Title,
 		&i.AuthorID,
 		&i.Description,
+		&i.YearPublished,
+		&i.CopiesTotal,
+		&i.CopiesAvailable,
 	)
 	return i, err
 }

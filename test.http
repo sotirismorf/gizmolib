@@ -1,7 +1,7 @@
 POST http://localhost:8080/token
 
 {
-	"username": "username1",
+	"username": "admin",
 	"password": "password"
 }
 
@@ -21,7 +21,10 @@ POST http://localhost:8080/books
 {
 	"Title": "anti-oedipus",
 	"Description": "a nice book",
-	"AuthorID": 1
+	"AuthorID": 1,
+	"YearPublished": 2022,
+	"CopiesAvailable": 5,
+	"CopiesTotal": 5
 }
 
 GET http://localhost:8080/books

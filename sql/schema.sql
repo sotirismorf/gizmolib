@@ -7,10 +7,13 @@ CREATE TABLE authors
 
 CREATE TABLE books
 (
-    id          BIGSERIAL PRIMARY KEY,
-    title       VARCHAR(64) NOT NULL,
-    author_id   BIGSERIAL NOT NULL,
-    description TEXT NOT NULL,
+    id               BIGSERIAL PRIMARY KEY,
+    title            VARCHAR(64) NOT NULL,
+    author_id        BIGSERIAL   NOT NULL,
+    description      TEXT        NOT NULL,
+	year_published   SMALLINT    NOT NULL,
+	copies_total     INT         NOT NULL DEFAULT 1,
+	copies_available INT         NOT NULL DEFAULT 1,
     CONSTRAINT fk_author FOREIGN KEY(author_id) REFERENCES authors(id)
 );
 
