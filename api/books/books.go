@@ -6,6 +6,7 @@ import (
 	"net/http"
 	
 	"github.com/sotirismorf/microservice/internal/database"
+	model "github.com/sotirismorf/microservice/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,34 +27,8 @@ func (s *Service) RegisterHandlers(router *gin.Engine) {
 	router.GET("/books", s.List)
 }
 
-type apiBook struct {
-	ID              int64
-	Title           string `json:"title,omitempty" binding:"required,max=32"`
-	Description     string `json:"description,omitempty" binding:"required"`
-	AuthorID        int64
-	YearPublished   int16
-	CopiesAvailable int32
-	CopiesTotal     int32
-}
-
-type apiBookFull struct {
-	ID              int64
-	AuthorID        int64
-	Title           string `json:"title,omitempty" binding:"required,max=32"`
-	AuthorName      string `json:"name,omitempty" binding:"required"`
-	Description     string `json:"description,omitempty" binding:"required"`
-	YearPublished   int16
-	CopiesAvailable int32
-	CopiesTotal     int32
-}
-
-type apiBookPartialUpdate struct {
-	Title       *string `json:"title,omitempty" binding:"omitempty,max=64"`
-	Description *string `json:"description,omitempty" binding:"omitempty"`
-}
-
-func fromDB(book database.Book) *apiBook {
-	return &apiBook{
+func fromDB(book database.Book) *model.ApiBook {
+	return &model.ApiBook{
 		ID:          book.ID,
 		AuthorID:    book.AuthorID,
 		Title:       book.Title,
@@ -64,8 +39,8 @@ func fromDB(book database.Book) *apiBook {
 	}
 }
 
-func fromDBFull(book database.ListBooksRow) *apiBookFull {
-	return &apiBookFull{
+func fromDBFull(book database.ListBooksRow) *model.ApiBookFull {
+	return &model.ApiBookFull{
 		ID:              book.ID,
 		AuthorID:        book.AuthorID,
 		Title:           book.Title,
@@ -83,7 +58,7 @@ type pathParameters struct {
 
 func (s *Service) Create(c *gin.Context) {
 	// Parse request
-	var request apiBook
+	var request model.ApiBook
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -141,7 +116,7 @@ func (s *Service) FullUpdate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	var request apiBook
+	var request model.ApiBook
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -177,7 +152,7 @@ func (s *Service) PartialUpdate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	var request apiBookPartialUpdate
+	var request model.ApiBookPartialUpdate
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -246,7 +221,7 @@ func (s *Service) List(c *gin.Context) {
 	}
 
 	// Build response
-	var response []*apiBookFull
+	var response []*model.ApiBookFull
 	for _, book := range books {
 		response = append(response, fromDBFull(book))
 	}
