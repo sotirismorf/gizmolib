@@ -24,18 +24,18 @@ func (s *Service) RegisterHandlers(router *gin.Engine) {
 	router.PUT("/books/:id", s.FullUpdate)
 	router.PATCH("/books/:id", s.PartialUpdate)
 	router.DELETE("/books/:id", s.Delete)
-	router.GET("/books", s.List)
+	router.GET("/books", s.ListBooks)
 }
 
 func fromDB(book database.Book) *model.ApiBook {
 	return &model.ApiBook{
-		ID:          book.ID,
-		AuthorID:    book.AuthorID,
-		Title:       book.Title,
-		Description: book.Description,
-		YearPublished:    book.YearPublished,
+		ID:              book.ID,
+		AuthorID:        book.AuthorID,
+		Title:           book.Title,
+		Description:     book.Description,
+		YearPublished:   book.YearPublished,
 		CopiesAvailable: book.CopiesAvailable,
-		CopiesTotal: book.CopiesTotal,
+		CopiesTotal:     book.CopiesTotal,
 	}
 }
 
@@ -207,7 +207,7 @@ func (s *Service) Delete(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func (s *Service) List(c *gin.Context) {
+func (s *Service) ListBooks(c *gin.Context) {
 	// List books
 	books, err := s.queries.ListBooks(context.Background())
 	if err != nil {
@@ -225,5 +225,5 @@ func (s *Service) List(c *gin.Context) {
 	for _, book := range books {
 		response = append(response, fromDBFull(book))
 	}
-	c.IndentedJSON(http.StatusOK, books)
+	c.IndentedJSON(http.StatusOK, response)
 }
