@@ -19,12 +19,12 @@ POST http://localhost:8080/authors
 POST http://localhost:8080/books
 
 {
-	"Title": "anti-oedipus",
-	"Description": "a nice book",
-	"AuthorID": 1,
-	"YearPublished": 2022,
-	"CopiesAvailable": 5,
-	"CopiesTotal": 5
+	"title": "anti-oedipus",
+	"description": "a nice book",
+	"authorId": 1,
+	"yearPublished": 2022,
+	"copiesAvailable": 5,
+	"copiesTotal": 5
 }
 
 GET http://localhost:8080/books
