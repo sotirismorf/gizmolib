@@ -6,6 +6,7 @@ import (
 	"net/http"
 	
 	"github.com/sotirismorf/microservice/internal/database"
+	model "github.com/sotirismorf/microservice/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,19 +27,8 @@ func (s *Service) RegisterHandlers(router *gin.Engine) {
 	router.GET("/authors", s.List)
 }
 
-type apiAuthor struct {
-	ID   int64
-	Name string `json:"name,omitempty" binding:"required,max=32"`
-	Bio  string `json:"bio,omitempty" binding:"required"`
-}
-
-type apiAuthorPartialUpdate struct {
-	Name *string `json:"name,omitempty" binding:"omitempty,max=32"`
-	Bio  *string `json:"bio,omitempty" binding:"omitempty"`
-}
-
-func fromDB(author database.Author) *apiAuthor {
-	return &apiAuthor{
+func fromDB(author database.Author) *model.ApiAuthor {
+	return &model.ApiAuthor{
 		ID:   author.ID,
 		Name: author.Name,
 		Bio:  author.Bio,
@@ -51,7 +41,7 @@ type pathParameters struct {
 
 func (s *Service) Create(c *gin.Context) {
 	// Parse request
-	var request apiAuthor
+	var request model.ApiAuthor
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -105,7 +95,7 @@ func (s *Service) FullUpdate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	var request apiAuthor
+	var request model.ApiAuthor
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -140,7 +130,7 @@ func (s *Service) PartialUpdate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	var request apiAuthorPartialUpdate
+	var request model.ApiAuthorPartialUpdate
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -209,9 +199,9 @@ func (s *Service) List(c *gin.Context) {
 	}
 
 	// Build response
-	var response []*apiAuthor
+	var response []*model.ApiAuthor
 	for _, author := range authors {
 		response = append(response, fromDB(author))
 	}
-	c.IndentedJSON(http.StatusOK, authors)
+	c.IndentedJSON(http.StatusOK, response)
 }
